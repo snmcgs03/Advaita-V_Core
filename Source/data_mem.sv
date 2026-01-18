@@ -9,8 +9,6 @@ module data_mem(
     // A byte-addressable memory of 1024 bytes
     logic [7:0] mem [0:1023];
 
-    // --- Synchronous Write Logic (Your implementation is correct) ---
-    // This part correctly uses the byte-enable signals for masked writes.
     always_ff @(posedge clk) begin
         if (mem_write) begin
             if (byte_enable[0]) mem[addr + 0] <= write_data[7:0];
