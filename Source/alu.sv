@@ -20,8 +20,7 @@ module alu #(
             // ARITHMETIC OPERATIONS
             // ==========================================================
             4'b0000: begin 
-                // Handles: ADD (R-type), ADDI (I-type), 
-                // Also: LW, SW, JALR, AUIPC (address calculation)
+                // Handles: ADD (R-type), ADDI (I-type), LW, SW, JALR, AUIPC (address calculation)
                 alu_out = rs1_data + rs2_data; 
             end
 
