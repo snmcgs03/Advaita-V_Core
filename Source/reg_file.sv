@@ -9,8 +9,8 @@ module reg_file(
     logic [31:0] register [31:0];
 
     always_comb begin
-        rs1_data = register[rs1_sel];
-        rs2_data = register[rs2_sel];
+        rs1_data = (rs1_sel == 5'b0) ? 32'b0 : register[rs1_sel];
+        rs2_data = (rs2_sel == 5'b0) ? 32'b0 : register[rs2_sel];
     end
 
     always @(posedge clk or posedge reset) begin
