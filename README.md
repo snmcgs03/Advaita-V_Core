@@ -21,7 +21,37 @@ This phase performs arithmetic, logical, and comparison operations via the ALU. 
 The final result—either an ALU output, computed address, or memory-returned value—is selected through a prioritized multiplexer and written back to the destination register. This stage ensures correct update of architectural state for instructions producing a result.
 
 ---
+## Project Structure
 
+The repository is organized into functional directories to separate the hardware design, verification environment, and architectural documentation.
+
+```text
+Advaita-V_Core/
+├── RTL/                  # Linted schematics & block diagrams
+│   ├── Core.pdf          # Full processor core schematic
+│   ├── IF_Stage.pdf      # Instruction Fetch stage diagram
+│   ├── ID_Stage.pdf      # Instruction Decode stage diagram
+│   ├── Ex_Stage.pdf      # Execution stage diagram
+│   ├── WB_Stage.pdf      # Write-back stage diagram
+│   └── Top_Module.pdf    # Core + Memory integration diagram
+├── Source/               # SystemVerilog design files
+│   ├── id_stage.sv       # Instruction Decode logic
+│   ├── execution.sv      # ALU and execution control
+│   ├── alu.sv            # Arithmetic Logic Unit
+│   ├── reg_file.sv       # 32-bit Integer Register File
+│   ├── control_gen.sv    # Main Control Unit logic
+│   ├── imm_generator.sv  # Immediate value sign-extension
+│   ├── data_mem.sv       # Data Memory module
+│   ├── instruction_mem.sv # Instruction Memory module
+│   └── ...               # (additional sub-modules & muxes)
+├── Test_bench/           # Verification environment
+│   ├── *_tb.sv           # Individual unit testbenches
+│   ├── single_cycle_riscV_tb.sv # Full-core testbench
+│   ├── instructions.hex  # Hex code for instruction memory initialization
+│   └── data.hex          # Hex code for data memory initialization
+└── RISCV_CARD.pdf        # RV32I Instruction Set Reference Card
+```
+---
 ##  Core Integration & Testability
 
 The top-level module integrates the processor core with instruction and data memory blocks to create a self-contained simulation environment. The memory modules are external to the core and interact via standard interface signals. Testbenches are provided to evaluate instruction sequences, monitor control behavior, and validate data flow correctness. Outputs are easily observable through key register file reads and result ports.
@@ -34,7 +64,7 @@ Refer to: [Top_Module.pdf](https://github.com/snmcgs03/Single_cycle_RISC-V/raw/m
 ##  Supported RV32I Instruction Formats
 
 - **R-Type**: `ADD`, `SUB`, `AND`, `OR`, `XOR`, `SLL`, `SRL`, `SRA`, `SLT`, `SLTU`
-- **I-Type**: `ADDI`, `ANDI`, `ORI`, `XORI`, `SLLI`, `SRLI`, `SRAI`, `LW`,`LH`,`LB`,`LHU`,`LBU`, `JALR`
+- **I-Type**: `ADDI`, `ANDI`, `ORI`, `XORI`, `SLLI`, `SRLI`, `SRAI`,`SLTI`,`SLTIU`, `LW`,`LH`,`LB`,`LHU`,`LBU`, `JALR`
 - **S-Type**: `SW`,`SH`,`SB`
 - **B-Type**: `BEQ`, `BNE`, `BLT`, `BGE`, `BLTU`, `BGEU`
 - **U-Type**: `LUI`, `AUIPC`
