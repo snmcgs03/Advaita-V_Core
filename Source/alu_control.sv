@@ -53,28 +53,28 @@ begin
 if(fn3 == 3'b000)
 control_out = 4'b0000;  //addi + jalr
 
-if(fn3 == 3'b100)
+else if(fn3 == 3'b100)
 control_out = 4'b0010;  //xori
 
-if(fn3 == 3'b110)
+else if(fn3 == 3'b110)
 control_out = 4'b0011;  //ori
 
-if(fn3 == 3'b111)
+else if(fn3 == 3'b111)
 control_out = 4'b0100;  //andi
 
-if(fn3 == 3'b001)
+else if(fn3 == 3'b001)
 control_out = 4'b0101;  //slli
 
-if(fn3 == 3'b101 && imm11_5 == 7'h00)
+else if(fn3 == 3'b101 && imm11_5 == 7'h00)
 control_out = 4'b0110;  //srli
 
-if(fn3 == 3'b101 && imm11_5 == 7'h20)
+else if(fn3 == 3'b101 && imm11_5 == 7'h20)
 control_out = 4'b0111;  //srai
 
-if(fn3 == 3'b010)
+else if(fn3 == 3'b010)
 control_out = 4'b1000;  //slti
 
-if(fn3 == 3'b011)
+else if(fn3 == 3'b011)
 control_out = 4'b1001;  //sltiu
 end
 
