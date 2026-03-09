@@ -1,4 +1,4 @@
-module id_stage(rs1_data,rs2_data,imm_out,wb_data,opcode_out_d,fn3_out_d,fn7_5,imm11_5,branch,memtoreg,aluop,mem_write,alu_src,clk,reset,instruction,mux_inp);
+module id_stage(rs1_data,rs2_data,imm_out,wb_data,opcode_out_d,fn3_out_d,fn7_5,imm11_5,branch,memtoreg,aluop,mem_write,mem_read,alu_src,clk,reset,instruction,mux_inp);
 input logic [31:0]instruction,wb_data;
 input logic clk,reset;
 output logic mux_inp;
