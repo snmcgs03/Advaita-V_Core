@@ -36,7 +36,7 @@ module data_mem(
             end
         end else begin
             // Drive 0 or Z when idle to save power and simplify debugging
-            read_data = 32'hzzzzzzzz; 
+            read_data = 32'h00000000; 
         end
     end
 endmodule
