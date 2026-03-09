@@ -2,7 +2,7 @@ module main_control (
     input logic [6:0] opcode,
     output logic branch,
     output logic mux_inp,
-   // output logic memread,
+    output logic memread,
     output logic [1:0] memtoreg,
     output logic memwrite,
     output logic alusrc,
@@ -13,7 +13,7 @@ module main_control (
 always @(*) begin
     // Default values
     branch = 0;
-   // memread = 0;
+    memread = 0;
     memtoreg = 2'b11; 
     memwrite = 0;
     alusrc = 0;
@@ -25,7 +25,7 @@ always @(*) begin
         7'b0110011: // R-type
         begin
             branch = 0;
-            //memread = 0;
+            memread = 0;
             memtoreg = 2'b00;
             memwrite = 0;
             alusrc = 0;
@@ -37,7 +37,7 @@ always @(*) begin
         7'b0010011: // I-type
         begin 
             branch = 0;
-            //memread = 0;
+            memread = 0;
             memtoreg = 2'b00;
             memwrite = 0;
             alusrc = 1;
@@ -49,7 +49,7 @@ always @(*) begin
         7'b0000011: // Load
         begin
             branch = 0;
-           // memread = 1;
+            memread = 1;
             memtoreg = 2'b01; 
             memwrite = 0;
             alusrc = 1;
@@ -61,7 +61,7 @@ always @(*) begin
         7'b0100011: // Store
         begin
             branch = 0;
-            //memread = 0;
+            memread = 0;
             memtoreg = 2'b11; 
             memwrite=1; 
             alusrc = 1; 
@@ -73,7 +73,7 @@ always @(*) begin
         7'b1100011: // Branch
         begin
             branch = 1; 
-            //memread = 0; 
+            memread = 0; 
             memtoreg = 2'b00; 
             memwrite = 0; 
             alusrc = 0; 
@@ -85,7 +85,7 @@ always @(*) begin
         7'b1101111: // JAL
         begin
             branch = 0; 
-            //memread = 0; 
+            memread = 0; 
             memtoreg = 2'b10; 
             memwrite = 0; 
             alusrc = 1; 
@@ -97,7 +97,7 @@ always @(*) begin
          7'b1100111: // JALR
         begin
             branch = 0; 
-            //memread = 0; 
+            memread = 0; 
             memtoreg = 2'b10; 
             memwrite = 0; 
             alusrc = 1; 
@@ -110,7 +110,7 @@ always @(*) begin
         7'b0110111: 
         begin
             branch = 0; 
-            //memread = 0; 
+            memread = 0; 
             memtoreg = 2'b10; 
             memwrite = 0; 
             alusrc = 1; 
@@ -123,7 +123,7 @@ always @(*) begin
         7'b0010111: 
         begin
             branch = 0; 
-            //memread = 0; 
+            memread = 0; 
             memtoreg = 2'b10; 
             memwrite = 0; 
             alusrc = 1; 
@@ -135,7 +135,7 @@ always @(*) begin
         default: // Handle unspecified opcodes
         begin
             branch     = 1'b0;
-           // memread    = 1'b0;
+            memread    = 1'b0;
             memtoreg   = 2'b11;  
             memwrite   = 1'b0;
             alusrc     = 1'b0;
