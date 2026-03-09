@@ -26,7 +26,7 @@ module alu #(
 
             4'b0001: begin 
                 // Handles: SUB (R-type)
-                alu_out = rs1_data - rs2_data;
+                alu_out = rs1_data - rs2_data; //hardware will take as two's complement 
             end
 
             // ==========================================================
