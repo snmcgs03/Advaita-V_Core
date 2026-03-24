@@ -13,7 +13,7 @@ module reg_file(
         rs2_data = (rs2_sel == 5'b0) ? 32'b0 : register[rs2_sel];
     end
 
-    always @(posedge clk or posedge reset) begin
+    always_ff @(posedge clk or posedge reset) begin
        
         if (reset) begin
                 register <= '{default: 0};
