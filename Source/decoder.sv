@@ -1,11 +1,13 @@
-module decoder(instruction,rs1,rs2,rd,opcode,fn3,imm,imm_uj,fn7_5,imm11_5);
-input logic [31:0]instruction;
-output logic [4:0]rs1,rs2,rd;
-output logic [6:0]opcode,imm11_5;
-output logic [2:0]fn3;
-output logic [11:0]imm;
-output logic [19:0]imm_uj;
-output logic fn7_5;
+module decoder(
+    input  logic [31:0] instruction,
+    output logic [4:0]  rs1, rs2, rd,
+    output logic [6:0]  opcode,imm11_5,
+    output logic [2:0]  fn3,
+    output logic [11:0] imm,        // I-type/CSR immediate
+    output logic [19:0] imm_uj,
+    output logic [11:0] csr_addr,   // 12-bit CSR address
+    output logic        fn7_5
+);
 
 always_comb
 begin
@@ -17,6 +19,7 @@ imm = 0;
 imm_uj = 0;
 imm11_5 = 0;
 fn7_5 = 0;
+csr_addr = 0;
 
 opcode = instruction[6:0];
 
@@ -27,7 +30,7 @@ case(opcode)
         fn3 = instruction[14:12];
         rs1 = instruction[19:15];
         rs2 = instruction[24:20];
-         fn7_5 = instruction[30];
+        fn7_5 = instruction[30];
        
     end
     7'b0010011: //I-Type
@@ -36,7 +39,7 @@ case(opcode)
         fn3 = instruction[14:12];
         rs1 = instruction[19:15];
         imm = instruction[31:20];
-        imm11_5 = instruction[31:25];
+        imm11_5 = instruction[31:25];// Used for SLLI/SRLI/SRAI
     end
     7'b0000011: //load
     begin 
@@ -73,7 +76,7 @@ case(opcode)
     
     
     7'b1100111: // J-Type JALR
-begin
+    begin
     rd  = instruction[11:7];
     rs1 = instruction[19:15];
     fn3 = instruction[14:12]; // Should be 000
@@ -81,10 +84,18 @@ begin
 end
 
     7'b0010111: // U-Type AUIPC
-begin
+    begin
     rd     = instruction[11:7];
     imm_uj  = instruction[31:12]; // upper 20 bits
-end
+    end
+    
+    7'b1110011: // SYSTEM (CSR / Privileged)
+    begin
+            rd       = instruction[11:7];
+            fn3      = instruction[14:12];
+            rs1      = instruction[19:15]; // Also carries uimm[4:0]
+            csr_addr = instruction[31:20]; // Also carries funct12 for MRET/ECALL
+    end
     
     default:
     begin
@@ -97,6 +108,7 @@ end
     imm11_5 = 0;
     fn7_5 = 0;
     opcode = instruction[6:0];
+    csr_addr =0;
     end 
 endcase
 end

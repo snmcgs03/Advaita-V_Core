@@ -1,4 +1,4 @@
-module mux21 
+ module mux21 
 (
     input logic [31:0] a, b,
     input logic control,

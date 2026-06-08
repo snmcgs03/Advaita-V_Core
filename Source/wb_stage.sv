@@ -1,14 +1,41 @@
-module wb_stage(mem_out,alu_out,memtoreg,wb_data,return_addr,imm_out,pc_signed_offset,opcode_out_d);
-input logic [31:0]mem_out,alu_out,return_addr,imm_out,pc_signed_offset;
-output logic [31:0]wb_data;
-input logic [1:0]memtoreg;
-input logic [6:0]opcode_out_d;
-(* KEEP = "TRUE" *)wire [1:0]U_control;
-(* KEEP = "TRUE" *)wire [31:0] out;
-(* DONT_TOUCH = "TRUE" *) mux31 mux_wb (.a(alu_out),.b(mem_out),.c(out),.cntrl(memtoreg),.out(wb_data));
-(* DONT_TOUCH = "TRUE" *) control_gen U_cntrl (.opcode_out_d(opcode_out_d),.U_control(U_control));
-(* DONT_TOUCH = "TRUE" *) mux31 U_mux (.a(return_addr),.b(imm_out),.c(pc_signed_offset),.cntrl(U_control),.out(out));  //(jal/jalr),lui,auipc
+module wb_stage(
+    input  logic [31:0] mem_out,          // Data from Data Memory
+    input  logic [31:0] alu_out,          // Data from ALU
+    input  logic [31:0] csr_read_data,    // NEW: Data from CSR File
+    input  logic [31:0] return_addr,      // PC + 4 (for JAL/JALR)
+    input  logic [31:0] imm_out,          // For LUI (U-type)
+    input  logic [31:0] pc_signed_offset, // For AUIPC (U-type)
+    input  logic [1:0]  memtoreg,         // Selection from Main Control
+    input  logic [6:0]  opcode_out_d,     // Instruction opcode for U-type sub-selection
+    output logic [31:0] wb_data           // Final data to Register File
+);
+
+    // This internal variable handles the "Special" instructions (Jumps and U-types)
+    // that all share the same 'memtoreg' select line (2'b10).
+    logic [31:0] pre_wb_data;
+
+    // --- Sub-selection Logic for Jumps and U-Types ---
+    // Instead of a separate wb_control and wb_mux31, we use a single clean case statement.
+    always_comb begin
+        case (opcode_out_d)
+            7'b1101111, 
+            7'b1100111: pre_wb_data = return_addr;      // JAL / JALR (Write PC+4)
+            7'b0110111: pre_wb_data = imm_out;          // LUI (Write Upper Imm)
+            7'b0010111: pre_wb_data = pc_signed_offset; // AUIPC (Write PC + Upper Imm)
+            default:    pre_wb_data = alu_out;
+        endcase
+    end
+
+    // --- Final Write-Back Multiplexer ---
+    // Based on the 'memtoreg' signal from your Main Control Unit.
+    always_comb begin
+        unique case (memtoreg)
+            2'b00: wb_data = alu_out;          // Standard R-type / I-type ALU ops
+            2'b01: wb_data = mem_out;          // Loads (LB, LH, LW, etc.)
+            2'b10: wb_data = pre_wb_data;   // Jumps and U-Type instructions
+            2'b11: wb_data = csr_read_data;    // Zicsr instructions (CSRRW, CSRRS, etc.)
+            default: wb_data = alu_out;
+        endcase
+    end
+
 endmodule
-
-
-

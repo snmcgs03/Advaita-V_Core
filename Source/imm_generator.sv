@@ -1,9 +1,13 @@
-module imm_generator(imm_input,imm_output,opcode,imm_input_uj,fn3);
-input logic [11:0]imm_input;
-input logic [2:0]fn3;
-input logic [6:0]opcode;
-output logic [31:0]imm_output;
-input logic [19:0]imm_input_uj;
+`timescale 1ns / 1ps
+
+module imm_generator(
+input logic [11:0]imm_input,
+input logic [2:0]fn3,
+input logic [6:0]opcode,
+output logic [31:0]imm_output,
+input logic [19:0]imm_input_uj,
+input  logic [4:0]  rs1_field
+);
 
 always_comb
 begin
@@ -21,7 +25,7 @@ imm_output = {{20{imm_input[11]}}, imm_input};
 imm_output = {{imm_input_uj},12'b0};
 
 
- 7'b0010011:
+7'b0010011:
  begin // I-Type (immediate ALU ops)
       if (fn3 == 3'b001) 
       begin // SLLI
@@ -38,8 +42,13 @@ imm_output = {{imm_input_uj},12'b0};
       begin // Other immediate ALU ops (e.g., ADDI, ANDI, ORI, etc.)
          imm_output = {{20{imm_input[11]}}, imm_input};
       end
- end
-
+end
+7'b1110011: begin // SYSTEM / CSR
+                if (fn3[2]) // CSRRWI, CSRRSI, CSRRCI (Immediate forms)
+                    imm_output = {27'b0, rs1_field}; // Zero-extended uimm[4:0]
+                else
+                    imm_output = 32'b0;
+            end
 default:
 begin
 imm_output = {{20{imm_input[11]}},imm_input};
